@@ -1,61 +1,158 @@
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #f1f5f9;
-  font-family: Arial, sans-serif;
-}
+  <title>SI-ARDIT | Sistem Arsip Digital Terpadu</title>
 
-.iframe-container {
-  width: 100%;
-  height: 100dvh;
-  position: relative;
-}
+  <!-- PWA -->
+  <meta name="theme-color" content="#0f766e" />
+  <meta name="description" content="Sistem Arsip Digital Terpadu Puskesmas Sumbersari" />
 
-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: white;
-}
+  <!-- Apple PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="SI-ARDIT" />
 
-.loading {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  z-index: 9999;
-  flex-direction: column;
-  gap: 16px;
-}
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json" />
 
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #e2e8f0;
-  border-top-color: #0f766e;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
+  <!-- Icons -->
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.loading-text {
-  color: #0f172a;
-  font-size: 16px;
-  font-weight: bold;
-}
-</style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #f1f5f9;
+      font-family: Arial, sans-serif;
+    }
+
+    .iframe-container {
+      width: 100%;
+      height: 100dvh;
+      position: relative;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: white;
+    }
+
+    /* Loading Screen */
+    .loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      background: white;
+      z-index: 9999;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #e2e8f0;
+      border-top-color: #0f766e;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      color: #0f172a;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .loading-subtext {
+      color: #64748b;
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <img
+      src="icons/icon-192.png"
+      alt="SI-ARDIT"
+      class="logo"
+    />
+
+    <div class="spinner"></div>
+
+    <div class="loading-text">
+      SI-ARDIT
+    </div>
+
+    <div class="loading-subtext">
+      Sistem Arsip Digital Terpadu
+    </div>
+  </div>
+
+  <!-- App -->
+  <div class="iframe-container">
+    <iframe
+      id="app"
+      src="https://script.google.com/macros/s/AKfycbxFebxEa9yO-OZbX7yGvCTP7dUgg8zCGaCgYINCY1a_A-qi7___DcLUJJFx37C0NGsVQg/exec"
+      allow="fullscreen; camera; microphone; geolocation;"
+      allowfullscreen
+    ></iframe>
+  </div>
+
+  <script>
+    const loading = document.getElementById('loading');
+
+    // Hide loading setelah 3 detik
+    setTimeout(() => {
+      loading.style.display = 'none';
+    }, 3000);
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('./service-worker.js')
+          .then(() => {
+            console.log('Service Worker Registered');
+          })
+          .catch((error) => {
+            console.log('Service Worker Failed:', error);
+          });
+      });
+    }
+  </script>
+
+</body>
+</html>
