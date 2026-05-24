@@ -1,37 +1,51 @@
-const CACHE_NAME = 'si-ardit-v1';
+const CACHE_NAME = 'si-ardit-v5';
 
 const urlsToCache = [
-  './',
-  './index.html',
-  './offline.html',
-  './manifest.json'
+  '/',
+  '/index.html',
+  '/offline.html',
+  '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png'
 ];
 
-self.addEventListener('install', event => {
+// INSTALL
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+      .then((cache) => {
+        return cache.addAll(urlsToCache);
+      })
   );
 });
 
-self.addEventListener('activate', event => {
+// ACTIVATE
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys => {
+    caches.keys().then((keys) => {
       return Promise.all(
         keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', event => {
+// FETCH
+self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
-      .catch(() => caches.match(event.request))
-      .then(response => {
-        return response || caches.match('./offline.html');
+      .then((response) => {
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request)
+          .then((response) => {
+            return response || caches.match('/offline.html');
+          });
       })
   );
 });
